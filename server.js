@@ -1,6 +1,9 @@
 const express = require("express");
-
+const bcrypt = require("bcrypt-nodejs");
+const cors = require('cors')
 const app = express();
+
+app.use(cors())
 app.use(express.json());
 
 const database = {
@@ -22,6 +25,13 @@ const database = {
       joined: new Date(),
     },
   ],
+  login: [
+    {
+        id: "987",
+        hash: "",
+        email: "john@gmail.com"
+    }
+  ]
 };
 
 app.get("/", (req, res) => {
@@ -42,7 +52,7 @@ app.post("/signin", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, name, password } = req.body;
-  database.users.push({
+   database.users.push({
     id: "125",
     name: name,
     email: email,
@@ -81,6 +91,8 @@ app.put("/image", (req, res) => {
     return res.status(400).json("No such user in the database");
   }
 });
+
+
 
 app.listen(3000, () => {
   console.log("App is running on port 3000");
