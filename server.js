@@ -2,26 +2,24 @@ const express = require("express");
 const bcrypt = require("bcrypt-nodejs");
 const cors = require("cors");
 const app = express();
-const knex = require('knex');
-require('dotenv').config({path: '.env'});
-
-
+const knex = require("knex");
+require("dotenv").config({ path: ".env" });
 
 const db = knex({
-  client: 'pg',
+  client: "pg",
   connection: {
-    host : '127.0.0.1',
-    user : 'postgres',
-    password : process.env.DB_PASSWORD,
-    database : 'smart-brain'
-  }
+    host: "127.0.0.1",
+    user: "postgres",
+    password: process.env.DB_PASSWORD,
+    database: "smart-brain",
+  },
 });
 
-db.select('*')
-  .from('users')
-  .then( data => {
-    console.log(data)
-  })
+// db.select("*")
+//   .from("users")
+//   .then((data) => {
+//     console.log(data);
+//   });
 
 app.use(cors());
 app.use(express.json());
@@ -72,26 +70,34 @@ app.post("/signin", (req, res) => {
 
 app.post("/register", (req, res) => {
   const { email, name } = req.body;
-  db('users').insert({
-    email: email,
-    name: name,
-    joined: new Date()
-  }).then(console.log)
-  res.json(database.users[database.users.length - 1]);
+  db("users")
+    .returning("*")
+    .insert({
+      email: email,
+      name: name,
+      joined: new Date(),
+    })
+    .then((user) => {
+      res.json(user[0]);
+    })
+    .catch((err) => res.status(400).json("unable to register"));
 });
 
 app.get("/profile/:id", (req, res) => {
   const { id } = req.params;
-  let found = false;
-  database.users.forEach((user) => {
-    if (user.id === id) {
-      found = true;
-      return res.json(user);
-    }
-  });
-  if (!found) {
-    return res.status(400).json("No such user in the database");
-  }
+  db.select("*")
+    .from("users")
+    .where({
+      id: id,
+    })
+    .then((user) => {
+      if (user.length) {
+        res.json(user[0]);
+      } else {
+        res.status(400).json("Not found");
+      }
+    })
+    .catch((err) => res.status(400).json("Error getting user"));
 });
 
 app.put("/image", (req, res) => {
