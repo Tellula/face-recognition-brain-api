@@ -3,3 +3,4 @@
 
 # DB password
 .env
+.env.id
