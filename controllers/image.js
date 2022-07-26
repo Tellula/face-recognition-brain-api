@@ -1,8 +1,8 @@
 const Clarifai = require("clarifai");
-require ('custom-env').env('id')
+
 
 let app = new Clarifai.App({
-  apiKey: process.env.CLARIFAI_KEY,
+  apiKey: '703910c77c024678ac4469fbfa866e7a',
 });
   
 

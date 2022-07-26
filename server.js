@@ -4,7 +4,6 @@ const cors = require("cors");
 const app = express();
 const knex = require("knex");
 const { response } = require("express");
-require("dotenv").config({ path: ".env" });
 
 const register = require("./controllers/register");
 const signIn = require("./controllers/signIn");
@@ -16,7 +15,7 @@ const db = knex({
   connection: {
     host: "127.0.0.1",
     user: "postgres",
-    password: process.env.DB_PASSWORD,
+    password: '281003',
     database: "smart-brain",
   },
 });
